@@ -17,6 +17,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"strconv"
 
 	"git.torproject.org/pluggable-transports/snowflake.git/common/safelog"
 	"github.com/keroserene/go-webrtc"
@@ -26,7 +27,7 @@ import (
 const defaultBrokerURL = "https://snowflake-broker.bamsoftware.com/"
 const defaultRelayURL = "wss://snowflake.bamsoftware.com/"
 const defaultSTUNURL = "stun:stun.l.google.com:19302"
-const pollInterval = 5 * time.Second
+var pollInterval = 20 * time.Second
 
 //amount of time after sending an SDP answer before the proxy assumes the
 //client is not going to connect
@@ -171,6 +172,8 @@ func pollOffer(sid string) *webrtc.SessionDescription {
 			log.Printf("error polling broker: %s", err)
 		} else {
 			defer resp.Body.Close()
+			nextPoll, _ := strconv.Atoi(resp.Header.Get("Snowflake-Next-Poll"))
+			pollInterval = time.Duration(nextPoll) * time.Second
 			if resp.StatusCode != http.StatusOK {
 				log.Printf("broker returns: %d", resp.StatusCode)
 			} else {

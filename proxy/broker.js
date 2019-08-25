@@ -46,6 +46,7 @@ class Broker {
         if (xhr.DONE !== xhr.readyState) {
           return;
         }
+        snowflake.config.brokerPollInterval = xhr.getResponseHeader('Snowflake-Next-Poll') * 1000 || snowflake.config.brokerPollInterval;
         switch (xhr.status) {
           case Broker.STATUS.OK:
             return fulfill(xhr.responseText); // Should contain offer.
