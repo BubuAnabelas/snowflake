@@ -148,12 +148,17 @@ func (ctx *BrokerContext) AddSnowflake(id string) *Snowflake {
 	return snowflake
 }
 
+func calculateNextPoll() string {
+	return "20"
+}
+
 /*
 For snowflake proxies to request a client from the Broker.
 */
 func proxyPolls(ctx *BrokerContext, w http.ResponseWriter, r *http.Request) {
 	id := r.Header.Get("X-Session-ID")
 	body, err := ioutil.ReadAll(http.MaxBytesReader(w, r.Body, readLimit))
+	w.Header().Set("Snowflake-Next-Poll", calculateNextPoll())
 	if nil != err {
 		log.Println("Invalid data.")
 		w.WriteHeader(http.StatusBadRequest)

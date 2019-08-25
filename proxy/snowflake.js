@@ -52,7 +52,7 @@ class Snowflake {
     this.pollBroker();
     return this.pollInterval = setInterval((() => {
       return this.pollBroker();
-    }), this.config.defaultBrokerPollInterval);
+    }), this.config.brokerPollInterval);
   }
 
   // Regularly poll Broker for clients to serve until this snowflake is
